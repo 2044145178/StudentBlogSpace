@@ -20,7 +20,7 @@ import * as orm from '@midwayjs/orm';
     axios,
     {
       component: swagger,
-      enabledEnvironment: ['local'],
+      enabledEnvironment: ['local','prod'],
     },
     orm,
   ],
