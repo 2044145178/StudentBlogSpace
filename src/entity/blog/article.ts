@@ -1,5 +1,5 @@
 import {EntityModel} from "@midwayjs/orm";
-import {Column, CreateDateColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {Column, CreateDateColumn, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import Student from "../student/student";
 import Sort from "./sort";
 
@@ -39,6 +39,7 @@ export default class Article{
   @ManyToOne(type => Student,student =>student.articles)
   student:Student;
   @ManyToOne(type => Sort, sort => sort.articles)
+  @JoinColumn()
   sort:Sort;
 
 }

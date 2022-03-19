@@ -9,6 +9,7 @@ import Label from "../../entity/blog/label";
 
 export function tosortDto(sort:Sort):SortDto {
   const sortDto=new SortDto();
+  console.log(sort)
   sortDto.id=sort.id;
   sortDto.name=sort.name;
   sortDto.alias=sort.alias;
@@ -32,6 +33,7 @@ export function tobaseStudentDto(student:Student): BaseStudentDto{
 }
 export function todetailedArticleDto(article:Article,labels:Label[]|null):DetailedArticleDto {
   const detailedArticleDto=new DetailedArticleDto();
+  detailedArticleDto.id=article.id;
   detailedArticleDto.sort=tosortDto(article.sort);
   detailedArticleDto.title=article.title;
   detailedArticleDto.likes=article.likes;

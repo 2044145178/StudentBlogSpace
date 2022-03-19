@@ -22,17 +22,17 @@ export class ArticleService{
   sortModel:Repository<Sort>
   @InjectEntityModel(ArticleLabel)
   articleLabel:Repository<ArticleLabel>;
-  async getArticleById(id:number):Promise<DetailedArticleDto|undefined>{
-      const article =await this.articleModel.findOne({id:id});
+  async getArticleById(id:number):Promise<DetailedArticleDto|null>{
+      const article =await this.articleModel.findOne({relations:['sort','student'],where:{id:id}});
       if (isEmpty(article)){
-        return undefined;
+        return null;
       }
       const labels=await this.labelModel.createQueryBuilder("label")
         .innerJoin(ArticleLabel,'article_label','label.id=article_label.labelId')
         .innerJoinAndMapMany('label',Article,'article','article.id=article_label.articleId')
         .where('article.id=:id',{id:article.id})
         .getMany();
-      return todetailedArticleDto(article,labels);
+    return todetailedArticleDto(article,labels);
   }
   async addArticle(article:CreateArticleDto):Promise<boolean>{
     let flag=true;
