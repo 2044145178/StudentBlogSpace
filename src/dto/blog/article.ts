@@ -46,6 +46,9 @@ export class CreateArticleDto {
   studentId:number;
 }
 export class DetailedArticleDto {
+  @ApiProperty({description:'博文ID',example:'98'})
+  @Rule(RuleType.number().required())
+  id:number;
   @ApiProperty({description:'标题',example:'php为何号称天下第一'})
   @Rule(RuleType.string().required())
   title:string;
