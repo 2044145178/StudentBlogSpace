@@ -89,3 +89,27 @@ export class DetailedArticleDto {
   @Rule(RuleType.object().required())
   student:BaseStudentDto;
 }
+export class UpdateArticleDto {
+  @ApiProperty({description:'博文ID',example:'250'})
+  @Rule(RuleType.number().required())
+  id:number;
+  @ApiProperty({description:'标题',example:'php为何号称天下第一'})
+  @Rule(RuleType.string().required())
+  title:string;
+
+  @ApiProperty({description:'博文正文',example:'php天下第一。。。'})
+  @Rule(RuleType.string().required())
+  content:string;
+
+  @ApiProperty({description:'是否公开展示',example:true})
+  @Rule(RuleType.boolean().required())
+  show:boolean;
+
+  @ApiProperty({description:'分类ID',example:1})
+  @Rule(RuleType.number().required())
+  sortId:number;
+
+  @ApiProperty({type:[Number],description:'标签ID列表',example:[1,2]})
+  @Rule(RuleType.array().empty())
+  labelsId:number[];
+}
