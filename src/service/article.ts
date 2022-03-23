@@ -122,7 +122,7 @@ export class ArticleService{
   }
   async getArticleById(id:number):Promise<DetailedArticleDto|null>{
     const article =await this.articleModel.findOne({relations:['sort','student'],where:{id:id}});
-    if (isEmpty(article)){
+    if (article===undefined){
       return null;
     }
     const labels=await this.labelModel.createQueryBuilder("label")

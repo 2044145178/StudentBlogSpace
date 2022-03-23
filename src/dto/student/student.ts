@@ -27,7 +27,6 @@ export class CreateStudentDto {
   @ApiProperty({description:'密码',example:'123456'})
   @Rule(RuleType.string().min(8).max(16).required())
   password:string;
-
 }
 export class DetailedStudentDto {
   @ApiProperty({description:'学号',example:20051000})
@@ -47,4 +46,18 @@ export class DetailedStudentDto {
   countViews:number;
   @ApiProperty({type:[DetailedArticleDto],description:'博文列表'})
   articles:DetailedArticleDto[];
+}
+export class UpdateStudentDto {
+  @ApiProperty({description:'学号',example:20051000})
+  @Rule(RuleType.number().required())
+  id:number;
+  @ApiProperty({description:'用户名',example:'',minLength:3,maxLength:8})
+  @Rule(RuleType.string().min(3).max(8).required())
+  username:string;
+  @ApiProperty({description:'学生姓名',example:'张三',minLength:2,maxLength:5})
+  @Rule(RuleType.string().min(2).max(5).required())
+  name:string;
+  @ApiProperty({description:'密码',example:'123456'})
+  @Rule(RuleType.string().min(8).max(16).required())
+  password:string;
 }

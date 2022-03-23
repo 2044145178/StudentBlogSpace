@@ -34,7 +34,7 @@ export default class Student{
   @OneToMany(type => Article, article => article.student)
   articles:Article[];
   @OneToMany(type => AttendanceRecord, attendanceRecord => attendanceRecord.student )
-  attendanceRecord:AttendanceRecord;
+  attendanceRecords:AttendanceRecord[];
   @OneToOne(type => Wordle)
   @JoinColumn()
   wordle:Wordle;

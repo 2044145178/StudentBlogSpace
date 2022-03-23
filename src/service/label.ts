@@ -40,9 +40,9 @@ export class LabelService {
       return false;
     }
     if (flag){
-      (<Label>labelToUpdate).name=label.name;
-      (<Label>labelToUpdate).alias=label.alias;
-      (<Label>labelToUpdate).description=label.description;
+      (<Label>labelToUpdate).name=selectNotNULL(label.name, (<Label>labelToUpdate).name);
+      (<Label>labelToUpdate).alias=selectNotNULL(label.alias,(<Label>labelToUpdate).alias);
+      (<Label>labelToUpdate).description=selectNotNULL(label.description,(<Label>labelToUpdate).description);
       await this.labelModel.save(<Label>labelToUpdate);
     }
     return flag;

@@ -42,9 +42,9 @@ export class SortService {
       flag=false;
     }
     if (flag){
-      (<Sort>sortToUpdate).name=sort.name;
-      (<Sort>sortToUpdate).alias=sort.alias;
-      (<Sort>sortToUpdate).description=sort.description;
+      (<Sort>sortToUpdate).name=selectNotNULL(sort.name,(<Sort>sortToUpdate).name);
+      (<Sort>sortToUpdate).alias=selectNotNULL(sort.alias,(<Sort>sortToUpdate).alias);
+      (<Sort>sortToUpdate).description=selectNotNULL(sort.description,(<Sort>sortToUpdate).description);
       await this.sortModel.save(<Sort>sortToUpdate);
     }
     return flag;
