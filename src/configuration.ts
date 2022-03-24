@@ -9,6 +9,8 @@ import * as axios from '@midwayjs/axios';
 import { ReportMiddleware } from './middleware/report.middleware';
 import * as swagger from '@midwayjs/swagger';
 import * as orm from '@midwayjs/orm';
+import * as cache from '@midwayjs/cache'
+import * as cors from '@midwayjs/cross-domain'
 @Configuration({
   imports: [
     koa,
@@ -22,6 +24,8 @@ import * as orm from '@midwayjs/orm';
       component: swagger,
     },
     orm,
+    cache,
+    cors
   ],
   importConfigs: [join(__dirname, './config')],
 })

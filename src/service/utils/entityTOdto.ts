@@ -2,7 +2,7 @@ import Sort from "../../entity/blog/sort";
 import {SortDto} from "../../dto/blog/sort";
 import Article from "../../entity/blog/article";
 import {DetailedArticleDto} from "../../dto/blog/article";
-import {BaseStudentDto} from "../../dto/student/student";
+import {BaseStudentDto, DetailedStudentDto} from "../../dto/student/student";
 import Student from "../../entity/student/student";
 import {LabelDto} from "../../dto/blog/label";
 import Label from "../../entity/blog/label";
@@ -45,4 +45,13 @@ export function todetailedArticleDto(article:Article,labels:Label[]|null):Detail
   const labelDtos=labels.map(tolabelDto);
   detailedArticleDto.labels=labelDtos;
   return detailedArticleDto;
+}
+export function toDetailedStudentDto(student:Student):DetailedStudentDto {
+  const detailedStudentDto=new DetailedStudentDto();
+  detailedStudentDto.id=student.id;
+  detailedStudentDto.name=student.name;
+  detailedStudentDto.username=student.username;
+  detailedStudentDto.wordle=student.wordle;
+  detailedStudentDto.attendanceRecords=student.attendanceRecords;
+  return detailedStudentDto;
 }

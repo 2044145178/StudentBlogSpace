@@ -5,7 +5,7 @@ import {Repository} from "typeorm";
 import {isEmpty} from "lodash";
 import {CreateLabelDto, LabelDto} from "../dto/blog/label";
 import {tolabelDto} from "./utils/entityTOdto";
-import {QueryListDto} from "../dto/common/comm";
+import {QueryListDto} from "../dto/common/Comm";
 import {selectNotNULL} from "./utils/utils";
 
 @Provide()

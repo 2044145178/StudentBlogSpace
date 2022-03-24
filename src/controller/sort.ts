@@ -1,9 +1,9 @@
 import {Body, Controller, Del, Get, Inject, Post, Put, Query} from "@midwayjs/decorator";
 import {Validate} from "@midwayjs/validate";
-import {ApiQuery, ApiResponse} from "@midwayjs/swagger";
+import {ApiBody, ApiQuery, ApiResponse} from "@midwayjs/swagger";
 import {CreateSortDto, SortDto} from "../dto/blog/sort";
 import {SortService} from "../service/sort";
-import {QueryListDto} from "../dto/common/comm";
+import {QueryListDto} from "../dto/common/Comm";
 import {isEmpty} from "lodash";
 
 @Controller('/sorts')
@@ -15,6 +15,9 @@ export class SortController {
   @ApiResponse({
     description:'添加sort,成功返回true'
   })
+  @ApiBody({
+    description:'添加sort'
+  })
   async addSort(@Body()sort:CreateSortDto):Promise<boolean>{
     return await this.sortService.addSort(sort);
   }
@@ -24,7 +27,7 @@ export class SortController {
     description:'删除sort,成功返回true'
   })
   @ApiQuery({
-    description:'分类ID'
+    description:'删除分类，id为分类ID'
   })
   async deleteSortById(@Query('id')id:number):Promise<boolean>{
     return await this.sortService.deleteSort(id);
@@ -33,6 +36,9 @@ export class SortController {
   @Put('/')
   @ApiResponse({
     description:'修改sort,成功返回true'
+  })
+  @ApiBody({
+    description:'修改分类'
   })
   async updateSort(@Body()sort:SortDto):Promise<boolean>{
     return await this.sortService.updateSort(sort);
@@ -48,7 +54,8 @@ export class SortController {
     offset:偏移值，指定获取的第一个数据的位置;\n
     sortCriteria:排序标准\n\n
     获取单个分类\n
-    id:分类ID
+    id:分类ID\n\n
+    studentId:学生ID
     `,
     type:QueryListDto,
     name:'query',

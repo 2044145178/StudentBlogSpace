@@ -1,9 +1,9 @@
 import {Controller, Inject, Post, Del, Put, Get, Body, Query} from "@midwayjs/decorator";
 import {LabelService} from "../service/label";
 import {Validate} from "@midwayjs/validate";
-import { ApiQuery, ApiResponse} from "@midwayjs/swagger";
+import {ApiBody, ApiQuery, ApiResponse} from "@midwayjs/swagger";
 import {CreateLabelDto, LabelDto} from "../dto/blog/label";
-import { QueryListDto} from "../dto/common/comm";
+import { QueryListDto} from "../dto/common/Comm";
 import {isEmpty} from "lodash";
 
 @Controller('/labels')
@@ -15,6 +15,9 @@ export class LabelController {
   @ApiResponse({
     description:'添加label,成功返回true'
   })
+  @ApiBody({
+    description:'添加label'
+  })
   async addLabel(@Body()label:CreateLabelDto):Promise<boolean>{
     return await this.labelService.addLabel(label);
   }
@@ -24,7 +27,7 @@ export class LabelController {
     description:'通过labelID删除label,成功返回true'
   })
   @ApiQuery({
-    description:'标签ID'
+    description:'删除标签，id为标签ID'
   })
   async deleteLabel(@Query('id')id:number):Promise<boolean>{
     return await this.labelService.deleteLabelById(id);
@@ -33,6 +36,9 @@ export class LabelController {
   @Put ('/')
   @ApiResponse({
     description:'更新label,成功返回true'
+  })
+  @ApiBody({
+    description:'更新label'
   })
   async updateLabel(@Body()label:LabelDto):Promise<boolean>{
     return await this.labelService.updateLabel(label);
@@ -48,7 +54,8 @@ export class LabelController {
     offset:偏移值，指定获取的第一个数据的位置;\n
     sortCriteria:排序标准\n\n
     获取单个标签\n
-    id:标签ID
+    id:标签ID\n\n
+    studentId:学生ID
     `,
     type:QueryListDto,
     name:'query',

@@ -8,6 +8,6 @@ export default class AttendanceRecord{
   id:number;
   @CreateDateColumn()
   date:Date;
-  @ManyToOne(type => Student, student=>student.attendanceRecord)
+  @ManyToOne(type => Student, student=>student.attendanceRecords)
   student:Student;
 }

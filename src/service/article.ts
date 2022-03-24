@@ -10,7 +10,8 @@ import Label from "../entity/blog/label";
 import Student from "../entity/student/student";
 import Sort from "../entity/blog/sort";
 import {selectNotNULL} from "./utils/utils";
-import {QueryListDto} from "../dto/common/comm";
+import {LikeInfoDto, QueryListDto} from "../dto/common/Comm";
+import StudentLikeArticle from "../entity/blog/student_like_article";
 
 @Provide()
 export class ArticleService{
@@ -24,7 +25,8 @@ export class ArticleService{
   sortModel:Repository<Sort>
   @InjectEntityModel(ArticleLabel)
   articleLabel:Repository<ArticleLabel>;
-
+  @InjectEntityModel(StudentLikeArticle)
+  studentLikeArticle:Repository<StudentLikeArticle>
   async addArticle(article:CreateArticleDto):Promise<boolean>{
     let flag=true;
     const student=await this.studentModel.findOne({id:article.studentId});
@@ -120,8 +122,8 @@ export class ArticleService{
     }
     return flag;
   }
-  async getArticleById(id:number):Promise<DetailedArticleDto|null>{
-    const article =await this.articleModel.findOne({relations:['sort','student'],where:{id:id}});
+  async getArticleById(aid:number,sid:number):Promise<DetailedArticleDto|null>{
+    const article =await this.articleModel.findOne({relations:['sort','student'],where:{id:aid}});
     if (article===undefined){
       return null;
     }
@@ -130,7 +132,15 @@ export class ArticleService{
       .innerJoin(Article,'article','article.id=article_label.articleId')
       .where('article.id=:id',{id:article.id})
       .getMany();
-    return todetailedArticleDto(article,labels);
+    const detailedArticleDto:DetailedArticleDto=todetailedArticleDto(article,labels);
+    const likeRES=await this.studentLikeArticle.findOne({studentId:sid,articleId:aid});
+    console.log(likeRES)
+    if (likeRES!==undefined){
+      detailedArticleDto.liked=true;
+    }else{
+      detailedArticleDto.liked=false;
+    }
+    return detailedArticleDto;
   }
   async getArticles(queryListDto:QueryListDto):Promise<DetailedArticleDto[]|null>{
     let order;
@@ -161,17 +171,57 @@ export class ArticleService{
         .innerJoin(Article,'article','article.id=article_label.articleId')
         .where('article.id=:id',{id:articleList[i].id})
         .getMany();
-      detailedArticleDtoList.push(todetailedArticleDto(articleList[i],labels))
+      const detailedArticleDto:DetailedArticleDto=todetailedArticleDto(articleList[i],labels);
+      const likeRES=await this.studentLikeArticle.findOne({studentId:queryListDto.studentId,articleId:articleList[i].id});
+      if (likeRES!==undefined){
+        detailedArticleDto.liked=true;
+      }else{
+        detailedArticleDto.liked=false;
+      }
+      detailedArticleDtoList.push(detailedArticleDto);
     }
     return detailedArticleDtoList;
     // const articleList=await this.articleModel
     //   .createQueryBuilder('article')
     //   .innerJoinAndMapMany('article.student',Student,'student','student.id=article.studentId')
     //   .innerJoinAndMapMany('article.sort',Sort,'sort','sort.id=article.sortId')
-    //   .skip(selectNotNULL(queryListDto.offset,0))
-    //   .take(selectNotNULL(queryListDto.limit,-1))
+    //   .skip(selectNotNULL(comm.offset,0))
+    //   .take(selectNotNULL(comm.limit,-1))
     //   .orderBy({
     //
     //   })
+  }
+  async addLike(likeInfoDto:LikeInfoDto):Promise<boolean>{
+    const article=await this.articleModel.findOne({id:likeInfoDto.aid});
+    if (article===undefined){
+      return false;
+    }
+    const student=await this.studentModel.findOne({id:likeInfoDto.sid});
+    if (student===undefined){
+      return false;
+    }
+    const likeRES=await this.studentLikeArticle.findOne({articleId:likeInfoDto.aid,studentId:likeInfoDto.sid});
+    if (likeRES===undefined){
+      const likeRelation=new StudentLikeArticle()
+      likeRelation.articleId=likeInfoDto.aid;
+      likeRelation.studentId=likeInfoDto.sid;
+      await this.studentLikeArticle.save(likeRelation);
+      article.likes+=1;
+      await this.articleModel.save(article);
+    }else {
+      await this.studentLikeArticle.remove(likeRES);
+      article.likes-=1;
+      await this.articleModel.save(article);
+    }
+    return true;
+  }
+  async addView(id:number):Promise<boolean>{
+    const article=await this.articleModel.findOne({id:id});
+    if (article===undefined){
+      return false;
+    }
+    article.views+=1;
+    await this.articleModel.save(article);
+    return true;
   }
 }

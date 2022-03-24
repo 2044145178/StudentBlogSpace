@@ -40,7 +40,6 @@ export class CreateArticleDto {
   @ApiProperty({type:[Number],description:'标签ID列表',example:[1,2]})
   @Rule(RuleType.array().empty())
   labelsId:number[];
-
   @ApiProperty({description:'学生学号',example:20051000})
   @Rule(RuleType.number().required())
   studentId:number;
@@ -88,6 +87,10 @@ export class DetailedArticleDto {
   @ApiProperty({type:BaseStudentDto,description:'博文作者',example:'见BaseStudentDto'})
   @Rule(RuleType.object().required())
   student:BaseStudentDto;
+
+  @ApiProperty({description:'当前用户是否已点赞当前文章',example:'true'})
+  @Rule(RuleType.boolean().required())
+  liked:boolean;
 }
 export class UpdateArticleDto {
   @ApiProperty({description:'博文ID',example:'250'})

@@ -4,7 +4,7 @@ import Sort from "../entity/blog/sort";
 import {Repository} from "typeorm";
 import {CreateSortDto, SortDto} from "../dto/blog/sort";
 import { tosortDto} from "./utils/entityTOdto";
-import {QueryListDto} from "../dto/common/comm";
+import {QueryListDto} from "../dto/common/Comm";
 import {selectNotNULL} from "./utils/utils";
 
 @Provide()

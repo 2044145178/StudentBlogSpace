@@ -12,5 +12,4 @@ export default class Wordle{
     nullable:false,
   })
   imageUrl:string;
-
 }
