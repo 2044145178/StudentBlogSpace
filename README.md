@@ -1,8 +1,7 @@
 # my_midway_project
 
-！！！
-记得修改数据库密码
-
+！！！ 记得修改数据库密码
+示例网站：http://icqhl.top:7001/swagger-ui/index.html#/
 ## QuickStart
 
 <!-- add docs here for user -->
