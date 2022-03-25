@@ -20,9 +20,7 @@ import * as cors from '@midwayjs/cross-domain'
       enabledEnvironment: ['local'],
     },
     axios,
-    {
-      component: swagger,
-    },
+    swagger,
     orm,
     cache,
     cors

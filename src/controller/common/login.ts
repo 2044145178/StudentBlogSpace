@@ -2,7 +2,7 @@ import {Body, Controller, Get, Inject, Post} from "@midwayjs/decorator";
 import {VerifyService} from "../../service/common/verify";
 import {CaptchaCodeDto, CaptchaImgDto, LoginInfoDto, LoginSuccessInfoDto} from "../../dto/common/Comm";
 import {Validate} from "@midwayjs/validate";
-import {ApiBody, ApiResponse} from "@midwayjs/swagger";
+import {ApiBody, ApiQuery, ApiResponse} from "@midwayjs/swagger";
 
 @Controller('/login')
 export class LoginController {
@@ -14,13 +14,17 @@ export class LoginController {
     description:'返回验证码图片',
     type:CaptchaImgDto,
   })
+  @ApiQuery({
+    description:'获取验证码图片'
+  })
   async getCaptcha():Promise<CaptchaImgDto>{
     return await this.verifyService.createCaptchaImg();
   }
   @Validate()
   @Post('/login.do')
   @ApiBody({
-    description:'执行登录操作'
+    description:'执行登录操作，传入LoginInfoDto',
+    type:LoginInfoDto
   })
   @ApiResponse({
     description:'成功返回LoginSuccessInfoDto，失败返回null',

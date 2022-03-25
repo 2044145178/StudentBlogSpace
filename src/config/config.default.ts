@@ -19,7 +19,7 @@ export default {
   swagger : {
     title: 'StudentBlogSpace',
     description: 'StudentBlogSpace for midway api',
-    version: '0.0.1',
+    version: '0.1',
     termsOfService: '',
     contact: {
       name: 'API Support',
@@ -30,5 +30,6 @@ export default {
       name: 'MIT',
       url: 'https://www.apache.org/licenses/LICENSE-2.0.html',
     },
+    servers:[]
   }
 } as MidwayConfig;

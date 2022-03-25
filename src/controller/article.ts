@@ -14,6 +14,10 @@ export class articleController {
   @Post('/')
   @ApiBody({
     type:CreateArticleDto,
+    description:'添加博文,传入CreateArticleDto'
+  })
+  @ApiResponse({
+    type:Boolean,
     description:'添加博文成功返回true'
   })
   async addArticle(@Body()article:CreateArticleDto):Promise<boolean>{
@@ -22,7 +26,7 @@ export class articleController {
   @Validate()
   @Del('/')
   @ApiResponse({
-    description:'删除博文成功返回true'
+    description:'删除博文成功返回true',
   })
   @ApiQuery({
     description:',删除博文,id为博文ID'
@@ -36,6 +40,10 @@ export class articleController {
     type:UpdateArticleDto,
     description:'修改博文成功返回true'
   })
+  @ApiResponse({
+    description:'修改博文成功返回true',
+    type:Boolean
+  })
   async updateArticle(@Body()article:UpdateArticleDto):Promise<boolean>{
     return await this.articleService.updateArticle(article);
   }
@@ -44,7 +52,7 @@ export class articleController {
   @ApiResponse({
     status: 200,
     description: '成功返回详细博文信息，失败返回null',
-    type: DetailedArticleDto,
+    type: [DetailedArticleDto],
   })
   @ApiQuery({
     description:`\n获取博文列表\n
@@ -71,7 +79,8 @@ export class articleController {
   }
   @Validate()
   @ApiResponse({
-    description:'成功返回TRUE，失败返回false'
+    description:'成功返回TRUE，失败返回false',
+    type:Boolean
   })
   @ApiBody({
     description:'点赞博文'
@@ -82,7 +91,8 @@ export class articleController {
   }
   @Validate()
   @ApiResponse({
-    description:'成功返回TRUE，失败返回false'
+    description:'成功返回TRUE，失败返回false',
+    type:Boolean
   })
   @ApiQuery({
     description:'id为博文ID，为博文增加一个访问量',

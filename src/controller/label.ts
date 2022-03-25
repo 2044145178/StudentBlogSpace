@@ -13,7 +13,8 @@ export class LabelController {
   @Validate()
   @Post('/')
   @ApiResponse({
-    description:'添加label,成功返回true'
+    description:'添加label,成功返回true',
+    type:Boolean
   })
   @ApiBody({
     description:'添加label'
@@ -24,7 +25,8 @@ export class LabelController {
   @Validate()
   @Del ('/')
   @ApiResponse({
-    description:'通过labelID删除label,成功返回true'
+    description:'通过labelID删除label,成功返回true',
+    type:Boolean
   })
   @ApiQuery({
     description:'删除标签，id为标签ID'
@@ -35,7 +37,8 @@ export class LabelController {
   @Validate()
   @Put ('/')
   @ApiResponse({
-    description:'更新label,成功返回true'
+    description:'更新label,成功返回true',
+    type:Boolean
   })
   @ApiBody({
     description:'更新label'
@@ -46,7 +49,8 @@ export class LabelController {
   @Validate()
   @Get ('/')
   @ApiResponse({
-    description:'通过labelID查询label,成功返回Label'
+    description:'通过labelID查询label,成功返回Label',
+    type:[LabelDto]
   })
   @ApiQuery({
     description:`\n获取标签列表\n

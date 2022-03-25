@@ -48,7 +48,10 @@ export class DetailedStudentDto {
   countViews:number;
   @ApiProperty({type:[DetailedArticleDto],description:'博文列表'})
   articles:DetailedArticleDto[];
-  @ApiProperty()
+  @ApiProperty({type:Wordle,description:'词云',example:'{\n' +
+      '      "id": 9,\n' +
+      '      "imageUrl": "[[\\"天下第一\\",2],[\\"php\\",1],[\\"java\\",1]]"\n' +
+      '    }'})
   wordle:Wordle;
   @ApiProperty()
   attendanceRecords:AttendanceRecord[];

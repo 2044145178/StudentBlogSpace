@@ -13,7 +13,8 @@ export class SortController {
   @Validate()
   @Post('/')
   @ApiResponse({
-    description:'添加sort,成功返回true'
+    description:'添加sort,成功返回true',
+    type:Boolean
   })
   @ApiBody({
     description:'添加sort'
@@ -24,7 +25,8 @@ export class SortController {
   @Validate()
   @Del('/')
   @ApiResponse({
-    description:'删除sort,成功返回true'
+    description:'删除sort,成功返回true',
+    type:Boolean
   })
   @ApiQuery({
     description:'删除分类，id为分类ID'
@@ -35,7 +37,8 @@ export class SortController {
   @Validate()
   @Put('/')
   @ApiResponse({
-    description:'修改sort,成功返回true'
+    description:'修改sort,成功返回true',
+    type:Boolean
   })
   @ApiBody({
     description:'修改分类'
@@ -46,7 +49,8 @@ export class SortController {
   @Validate()
   @Get('/')
   @ApiResponse({
-    description:'获取sort,成功返回SortDto'
+    description:'获取sort,成功返回SortDto',
+    type:[SortDto]
   })
   @ApiQuery({
     description:`\n获取分类列表\n
