@@ -5,6 +5,8 @@ import {ApiBody, ApiQuery, ApiResponse} from "@midwayjs/swagger";
 import {CreateStudentDto, DetailedStudentDto, UpdateStudentDto} from "../dto/student/student";
 import {QueryListDto} from "../dto/common/Comm";
 import {isEmpty} from "lodash";
+import {res} from "../common/utils";
+import {ResOp} from "../interface";
 
 @Controller('/students')
 export class StudentController {
@@ -21,8 +23,9 @@ export class StudentController {
     type:Boolean,
     description:'注册用户成功返回token,失败返回null'
   })
-  async addStudent(@Body()student:CreateStudentDto):Promise<boolean|null>{
-    return await this.studentService.addStudent(student);
+  async addStudent(@Body()student:CreateStudentDto):Promise<ResOp>{
+    const result=await this.studentService.addStudent(student);
+    return res({data:result,code:result?null:10501});
   }
   @Validate()
   @Put('/')
@@ -34,8 +37,9 @@ export class StudentController {
     description:'修改学生信息，传入UpdateStudentDto中字段（可选）',
     type:UpdateStudentDto
   })
-  async updateStudent(@Body()student:UpdateStudentDto):Promise<boolean>{
-    return await this.studentService.updateStudent(student);
+  async updateStudent(@Body()student:UpdateStudentDto):Promise<ResOp>{
+    const result=await this.studentService.updateStudent(student);
+    return res({data:result,code:result?null:20503});
   }
   @Validate()
   @Get ('/')
@@ -56,14 +60,16 @@ export class StudentController {
     name:'query',
     required:false
   })
-  async getStudents(@Query()queryList:QueryListDto):Promise<DetailedStudentDto|DetailedStudentDto[]|null>{
+  async getStudents(@Query()queryList:QueryListDto):Promise<ResOp>{
     console.log(queryList)
     if (queryList.id!==null&&queryList.id!==undefined){
-      return this.studentService.getStudentById(queryList.id,queryList.studentId);
+      const student=await this.studentService.getStudentById(queryList.id,queryList.studentId);
+      return res({data:student});
     }else if (!isEmpty(queryList)){
-      return this.studentService.getStudents(queryList);
+      const students=await this.studentService.getStudents(queryList);
+      return res({data:students});
     }else{
-      return null;
+      return res({code:20504});
     }
   }
 }

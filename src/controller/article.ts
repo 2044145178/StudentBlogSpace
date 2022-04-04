@@ -5,6 +5,8 @@ import {CreateArticleDto, DetailedArticleDto, UpdateArticleDto} from "../dto/blo
 import {Validate} from "@midwayjs/validate";
 import {LikeInfoDto, QueryListDto} from "../dto/common/Comm";
 import {isEmpty} from "lodash";
+import {res} from "../common/utils";
+import {ResOp} from "../interface";
 
 @Controller('/articles')
 export class articleController {
@@ -20,8 +22,9 @@ export class articleController {
     type:Boolean,
     description:'添加博文成功返回true'
   })
-  async addArticle(@Body()article:CreateArticleDto):Promise<boolean>{
-    return await this.articleService.addArticle(article);
+  async addArticle(@Body()article:CreateArticleDto):Promise<ResOp>{
+    const result=await this.articleService.addArticle(article);
+    return res({data:result,code:result?null:20201});
   }
   @Validate()
   @Del('/')
@@ -29,10 +32,11 @@ export class articleController {
     description:'删除博文成功返回true',
   })
   @ApiQuery({
-    description:',删除博文,id为博文ID'
+    description:'删除博文,id为博文ID'
   })
-  async deleteArticleById(@Query('id')id:number):Promise<boolean>{
-    return await this.articleService.deleteArticleById(id);
+  async deleteArticleById(@Query('id')id:number):Promise<ResOp>{
+    const result=await this.articleService.deleteArticleById(id);
+    return res({data:result,code:result?null:20202});
   }
   @Validate()
   @Put('/')
@@ -44,8 +48,9 @@ export class articleController {
     description:'修改博文成功返回true',
     type:Boolean
   })
-  async updateArticle(@Body()article:UpdateArticleDto):Promise<boolean>{
-    return await this.articleService.updateArticle(article);
+  async updateArticle(@Body()article:UpdateArticleDto):Promise<ResOp>{
+    const result=await this.articleService.updateArticle(article);
+    return res({data:result,code:result?null:20203});
   }
   @Validate()
   @Get('/')
@@ -67,14 +72,15 @@ export class articleController {
     name:'query',
     required:false
   })
-  async getArticles(@Query()queryList:QueryListDto):Promise<DetailedArticleDto|DetailedArticleDto[]|null>{
-    console.log(queryList)
+  async getArticles(@Query()queryList:QueryListDto):Promise<ResOp>{
     if (queryList.id!==null&&queryList.id!==undefined){
-      return this.articleService.getArticleById(queryList.id,queryList.studentId);
+      const article=await this.articleService.getArticleById(queryList.id,queryList.studentId);
+      return res({data:article});
     }else if (!isEmpty(queryList)){
-       return await this.articleService.getArticles(queryList);
+      const articles=await this.articleService.getArticles(queryList);
+       return res({data:articles});
     }else{
-      return null;
+      return res({code:20205});
     }
   }
   @Validate()
@@ -86,8 +92,9 @@ export class articleController {
     description:'点赞博文'
   })
   @Put('/like')
-  async like(@Body()likeInfoDto:LikeInfoDto):Promise<boolean>{
-    return await this.articleService.addLike(likeInfoDto);
+  async changeLike(@Body()likeInfoDto:LikeInfoDto):Promise<ResOp>{
+    const result=await this.articleService.addLike(likeInfoDto);
+    return res({code:result?null:20206});
   }
   @Validate()
   @ApiResponse({
@@ -99,7 +106,8 @@ export class articleController {
     example:4
   })
   @Put('/view')
-  async view(@Query('id')id:number):Promise<boolean>{
-    return await this.articleService.addView(id);
+  async addView(@Query('id')id:number):Promise<ResOp>{
+    const result=await this.articleService.addView(id);
+    return res({code:result?null:20207});
   }
 }

@@ -5,6 +5,8 @@ import {ApiBody, ApiQuery, ApiResponse} from "@midwayjs/swagger";
 import {CreateLabelDto, LabelDto} from "../dto/blog/label";
 import { QueryListDto} from "../dto/common/Comm";
 import {isEmpty} from "lodash";
+import {res} from "../common/utils";
+import {ResOp} from "../interface";
 
 @Controller('/labels')
 export class LabelController {
@@ -19,8 +21,9 @@ export class LabelController {
   @ApiBody({
     description:'添加label'
   })
-  async addLabel(@Body()label:CreateLabelDto):Promise<boolean>{
-    return await this.labelService.addLabel(label);
+  async addLabel(@Body()label:CreateLabelDto):Promise<ResOp>{
+    const result=await this.labelService.addLabel(label);
+    return res({data:result,code:result?null:20301});
   }
   @Validate()
   @Del ('/')
@@ -31,8 +34,9 @@ export class LabelController {
   @ApiQuery({
     description:'删除标签，id为标签ID'
   })
-  async deleteLabel(@Query('id')id:number):Promise<boolean>{
-    return await this.labelService.deleteLabelById(id);
+  async deleteLabel(@Query('id')id:number):Promise<ResOp>{
+    const result=await this.labelService.deleteLabelById(id);
+    return res({data:result,code:result?null:20302});
   }
   @Validate()
   @Put ('/')
@@ -43,8 +47,9 @@ export class LabelController {
   @ApiBody({
     description:'更新label'
   })
-  async updateLabel(@Body()label:LabelDto):Promise<boolean>{
-    return await this.labelService.updateLabel(label);
+  async updateLabel(@Body()label:LabelDto):Promise<ResOp>{
+    const result=await this.labelService.updateLabel(label);
+    return res({data:result,code:result?null:20303})
   }
   @Validate()
   @Get ('/')
@@ -65,14 +70,16 @@ export class LabelController {
     name:'query',
     required:false
   })
-  async getLabels(@Query()queryList:QueryListDto):Promise<LabelDto|LabelDto[]|null>{
+  async getLabels(@Query()queryList:QueryListDto):Promise<ResOp>{
     console.log(queryList)
     if (queryList.id!==null&&queryList.id!==undefined){
-      return this.labelService.getLabelById(queryList.id);
+      const label=await this.labelService.getLabelById(queryList.id);
+      return res({data:label});
     }else if (!isEmpty(queryList)){
-      return await this.labelService.getLabels(queryList);
+      const labels=await this.labelService.getLabels(queryList);
+      return res({data:labels});
     }else{
-      return null;
+      return res({code:20305});
     }
   }
 }

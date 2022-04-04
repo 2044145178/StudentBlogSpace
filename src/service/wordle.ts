@@ -5,7 +5,7 @@ import Wordle from "../entity/student/wordle";
 import Student from "../entity/student/student";
 import * as jieba from '@node-rs/jieba';
 import Article from "../entity/blog/article";
-import constant from "../common/constant";
+import constant from "../common/common_constants";
 @Provide()
 export class WordleService {
   @InjectEntityModel(Wordle)

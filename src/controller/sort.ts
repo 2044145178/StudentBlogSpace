@@ -5,6 +5,8 @@ import {CreateSortDto, SortDto} from "../dto/blog/sort";
 import {SortService} from "../service/sort";
 import {QueryListDto} from "../dto/common/Comm";
 import {isEmpty} from "lodash";
+import {res} from "../common/utils";
+import {ResOp} from "../interface";
 
 @Controller('/sorts')
 export class SortController {
@@ -19,8 +21,9 @@ export class SortController {
   @ApiBody({
     description:'添加sort'
   })
-  async addSort(@Body()sort:CreateSortDto):Promise<boolean>{
-    return await this.sortService.addSort(sort);
+  async addSort(@Body()sort:CreateSortDto):Promise<ResOp>{
+    const result=await this.sortService.addSort(sort);
+    return res({data:result,code:result?null:10401});
   }
   @Validate()
   @Del('/')
@@ -31,8 +34,9 @@ export class SortController {
   @ApiQuery({
     description:'删除分类，id为分类ID'
   })
-  async deleteSortById(@Query('id')id:number):Promise<boolean>{
-    return await this.sortService.deleteSort(id);
+  async deleteSortById(@Query('id')id:number):Promise<ResOp>{
+    const result=await this.sortService.deleteSort(id);
+    return res({data:result,code:result?null:20402});
   }
   @Validate()
   @Put('/')
@@ -43,8 +47,9 @@ export class SortController {
   @ApiBody({
     description:'修改分类'
   })
-  async updateSort(@Body()sort:SortDto):Promise<boolean>{
-    return await this.sortService.updateSort(sort);
+  async updateSort(@Body()sort:SortDto):Promise<ResOp>{
+    const result=await this.sortService.updateSort(sort);
+    return res({data:result,code:result?null:20403});
   }
   @Validate()
   @Get('/')
@@ -65,14 +70,16 @@ export class SortController {
     name:'query',
     required:false
   })
-  async getSorts(@Query()queryList?:QueryListDto):Promise<SortDto|SortDto[]|null>{
+  async getSorts(@Query()queryList?:QueryListDto):Promise<ResOp>{
     console.log(queryList)
     if (queryList.id!==null&&queryList.id!==undefined){
-      return this.sortService.getSortDtoById(queryList.id);
+      const sort=await this.sortService.getSortDtoById(queryList.id);
+      return res({data:sort})
     }else if (!isEmpty(queryList)){
-      return await this.sortService.getSorts(queryList);
+      const sorts=await this.sortService.getSorts(queryList);
+      return res({data:sorts})
     }else{
-      return null;
+      return res({code:20404});
     }
   }
 }
