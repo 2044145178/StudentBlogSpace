@@ -79,7 +79,7 @@ export class LabelController {
       const labels=await this.labelService.getLabels(queryList);
       return res({data:labels});
     }else{
-      return res({code:20305});
+      return res({code:20304});
     }
   }
 }

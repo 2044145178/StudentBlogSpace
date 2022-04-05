@@ -80,7 +80,7 @@ export class articleController {
       const articles=await this.articleService.getArticles(queryList);
        return res({data:articles});
     }else{
-      return res({code:20205});
+      return res({code:20204});
     }
   }
   @Validate()
@@ -94,7 +94,7 @@ export class articleController {
   @Put('/like')
   async changeLike(@Body()likeInfoDto:LikeInfoDto):Promise<ResOp>{
     const result=await this.articleService.addLike(likeInfoDto);
-    return res({code:result?null:20206});
+    return res({data:result,code:result?null:20205});
   }
   @Validate()
   @ApiResponse({
@@ -108,6 +108,6 @@ export class articleController {
   @Put('/view')
   async addView(@Query('id')id:number):Promise<ResOp>{
     const result=await this.articleService.addView(id);
-    return res({code:result?null:20207});
+    return res({data:result,code:result?null:20206});
   }
 }
