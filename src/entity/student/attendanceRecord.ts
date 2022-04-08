@@ -1,13 +1,21 @@
 import {EntityModel} from "@midwayjs/orm";
-import { CreateDateColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
-import Student from "./student";
+import {Column, CreateDateColumn, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import User from "../user/user";
 
 @EntityModel('attendance_record')
 export default class AttendanceRecord{
   @PrimaryGeneratedColumn()
   id:number;
   @CreateDateColumn()
-  date:Date;
-  @ManyToOne(type => Student, student=>student.attendanceRecords)
-  student:Student;
+  created_at:Date;
+  @UpdateDateColumn()
+  updated_at:Date;
+  @Column({
+    type:'int',
+    nullable:false
+  })
+  activation:number;
+  @ManyToOne(type => User, user=>user.attendanceRecords)
+  @JoinColumn({name:'staff_id',referencedColumnName:'staff_id'})
+  user:User;
 }

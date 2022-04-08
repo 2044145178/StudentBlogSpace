@@ -1,46 +1,48 @@
-import {Body, Controller, Get, Inject, Post, Put, Query} from "@midwayjs/decorator";
+import {Body, Controller, Get, Inject, Put, Query} from "@midwayjs/decorator";
 import {StudentService} from "../service/student";
 import {Validate} from "@midwayjs/validate";
 import {ApiBody, ApiQuery, ApiResponse} from "@midwayjs/swagger";
-import {CreateStudentDto, DetailedStudentDto, UpdateStudentDto} from "../dto/student/student";
+import {BaseAttendanceRecordDto, DetailedStudentDto, UpdateAttendanceRecordDto} from "../dto/student/student";
 import {QueryListDto} from "../dto/common/Comm";
 import {isEmpty} from "lodash";
 import {res} from "../common/utils";
 import {ResOp} from "../interface";
+import {AttendanceRecordService} from "../service/attendanceRecord";
 
 @Controller('/students')
 export class StudentController {
   @Inject()
   studentService:StudentService;
-
-  @Validate()
-  @Post('/')
-  @ApiBody({
-    type:CreateStudentDto,
-    description:'注册用户,传入CreateStudentDto'
-  })
-  @ApiResponse({
-    type:Boolean,
-    description:'注册用户成功返回token,失败返回null'
-  })
-  async addStudent(@Body()student:CreateStudentDto):Promise<ResOp>{
-    const result=await this.studentService.addStudent(student);
-    return res({data:result,code:result?null:10501});
-  }
-  @Validate()
-  @Put('/')
-  @ApiResponse({
-    description:'更新student,成功返回true',
-    type:Boolean
-  })
-  @ApiBody({
-    description:'修改学生信息，传入UpdateStudentDto中字段（可选）',
-    type:UpdateStudentDto
-  })
-  async updateStudent(@Body()student:UpdateStudentDto):Promise<ResOp>{
-    const result=await this.studentService.updateStudent(student);
-    return res({data:result,code:result?null:20503});
-  }
+  @Inject()
+  attendanceRecordService:AttendanceRecordService;
+  // @Validate()
+  // @Post('/')
+  // @ApiBody({
+  //   type:CreateStudentDto,
+  //   description:'注册用户,传入CreateStudentDto'
+  // })
+  // @ApiResponse({
+  //   type:Boolean,
+  //   description:'注册用户成功返回token,失败返回null'
+  // })
+  // async addStudent(@Body()student:CreateStudentDto):Promise<ResOp>{
+  //   const result=await this.studentService.addStudent(student);
+  //   return res({data:result,code:result?null:10501});
+  // }
+  // @Validate()
+  // @Put('/')
+  // @ApiResponse({
+  //   description:'更新student,成功返回true',
+  //   type:Boolean
+  // })
+  // @ApiBody({
+  //   description:'修改学生信息，传入UpdateStudentDto中字段（可选）',
+  //   type:UpdateStudentDto
+  // })
+  // async updateStudent(@Body()student:UpdateStudentDto):Promise<ResOp>{
+  //   const result=await this.studentService.updateStudent(student);
+  //   return res({data:result,code:result?null:20503});
+  // }
   @Validate()
   @Get ('/')
   @ApiResponse({
@@ -71,5 +73,34 @@ export class StudentController {
     }else{
       return res({code:20504});
     }
+  }
+  @Validate()
+  @Get('/attendanceRecord')
+  @ApiResponse({
+    description:'查询今天是否打卡,已打卡返回true',
+    type:Boolean
+  })
+  @ApiQuery({
+    description:'查询今日是否打卡，传入BaseAttendanceRecordDto',
+    type:BaseAttendanceRecordDto,
+    name:'query'
+  })
+  async checkAttendanceRecord(@Query()baseAttendanceRecordDto:BaseAttendanceRecordDto):Promise<ResOp>{
+    const result=await this.attendanceRecordService.checkAR(baseAttendanceRecordDto);
+    return res({data:result});
+  }
+  @Validate()
+  @Put('/attendanceRecord')
+  @ApiResponse({
+    description:'今日打卡,成功返回true',
+    type:Boolean
+  })
+  @ApiBody({
+    description:'今日打卡，传入UpdateAttendanceRecordDto',
+    type:UpdateAttendanceRecordDto
+  })
+  async updateAttendanceRecord(@Body()updateAttendanceRecordDto:UpdateAttendanceRecordDto):Promise<ResOp>{
+    const result=await this.attendanceRecordService.updateAR(updateAttendanceRecordDto);
+    return res({data:result,code:result?null:10701});
   }
 }

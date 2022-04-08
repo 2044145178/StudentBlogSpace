@@ -40,9 +40,9 @@ export class CreateArticleDto {
   @ApiProperty({type:[Number],description:'标签ID列表',example:[1,2]})
   @Rule(RuleType.array().empty())
   labelsId:number[];
-  @ApiProperty({description:'学生学号',example:20051000})
-  @Rule(RuleType.number().required())
-  studentId:number;
+  @ApiProperty({description:'学生学号',example:'20051000'})
+  @Rule(RuleType.string().required())
+  studentId:string;
 }
 export class DetailedArticleDto {
   @ApiProperty({description:'博文ID',example:'98'})

@@ -1,41 +1,32 @@
 import {EntityModel} from "@midwayjs/orm";
-import {Column, JoinColumn, OneToMany, OneToOne, PrimaryColumn} from "typeorm";
-import Article from "../blog/article";
-import AttendanceRecord from "./attendanceRecord";
-import Wordle from "./wordle";
+import {Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+
 
 @EntityModel('student')
 export default class Student{
-  @PrimaryColumn('int')
+  @PrimaryGeneratedColumn({type:'bigint'})
   id:number;
-
   @Column({
     type:"varchar",
-    length:20,
+    length:10,
     nullable:false,
     unique:true,
   })
-  username:string;
+  staff_id:string;
 
   @Column({
     type:"varchar",
-    length:20,
+    length:255,
     nullable:false,
   })
-  password:string;
+  class_id:string;
 
-  @Column({
-    type:"varchar",
-    length:20,
-    nullable:false,
+  @CreateDateColumn({
+    type:"timestamp",
   })
-  name:string;
-
-  @OneToMany(type => Article, article => article.student)
-  articles:Article[];
-  @OneToMany(type => AttendanceRecord, attendanceRecord => attendanceRecord.student )
-  attendanceRecords:AttendanceRecord[];
-  @OneToOne(type => Wordle)
-  @JoinColumn()
-  wordle:Wordle;
+  created_at:Date;
+  @UpdateDateColumn({
+    type:'timestamp'
+  })
+  updated_at:Date;
 }

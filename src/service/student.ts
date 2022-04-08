@@ -1,7 +1,6 @@
 import {Provide} from "@midwayjs/decorator";
 import {InjectEntityModel} from "@midwayjs/orm";
-import Student from "../entity/student/student";
-import {CreateStudentDto, DetailedStudentDto, UpdateStudentDto} from "../dto/student/student";
+import { DetailedStudentDto} from "../dto/student/student";
 import {Repository} from "typeorm";
 import {selectNotNULL} from "./utils/utils";
 import Article from "../entity/blog/article";
@@ -12,6 +11,7 @@ import {todetailedArticleDto, toDetailedStudentDto} from "./utils/entityTOdto";
 import {QueryListDto} from "../dto/common/Comm";
 import {DetailedArticleDto} from "../dto/blog/article";
 import StudentLikeArticle from "../entity/blog/student_like_article";
+import User from "../entity/user/user";
 
 @Provide()
 export class StudentService {
@@ -19,61 +19,63 @@ export class StudentService {
   articleModel:Repository<Article>;
   @InjectEntityModel(Label)
   labelModel:Repository<Label>
-  @InjectEntityModel(Student)
-  studentModel:Repository<Student>
+  @InjectEntityModel(User)
+  studentModel:Repository<User>
   @InjectEntityModel(Sort)
   sortModel:Repository<Sort>
   @InjectEntityModel(ArticleLabel)
   articleLabel:Repository<ArticleLabel>;
   @InjectEntityModel(StudentLikeArticle)
   studentLikeArticle:Repository<StudentLikeArticle>
-  async addStudent(student:CreateStudentDto):Promise<boolean>{
-    const stundet0=await this.studentModel.findOne({id:student.id});
-    const student1=await this.studentModel.findOne({username:student.username});
-    if (student1===undefined && stundet0===undefined){
-      await this.studentModel.save({
-        id:student.id,
-        username:student.username,
-        password:student.password,
-        name:student.name,
-        articles:[],
-        attendanceRecords:[],
-        wordle:null
-      }).catch(reason => {
-        console.log(reason)
-        return false;
-      })
-      return true;
-    }
-    return false;
-  }
-  async updateStudent(student:UpdateStudentDto):Promise<boolean>{
-    let flag=true;
-    const studentToUpdate=await this.studentModel.findOne({id:student.id})
-      .catch(reason => {
-        flag=false;
-        console.log(reason)
-      });
-    if (studentToUpdate===undefined){
-      return false;
-    }
-    if (flag){
-      (<Student>studentToUpdate).name=selectNotNULL(student.name,(<Student>studentToUpdate).name);
-      (<Student>studentToUpdate).username=selectNotNULL(student.username,(<Student>studentToUpdate).username);
-      (<Student>studentToUpdate).password=selectNotNULL(student.password,(<Student>studentToUpdate).password);
-      await this.studentModel.save(<Student>studentToUpdate).catch(reason => {
-        console.log(reason)
-        flag=false;
-      });
-    }
-    return flag;
-  }
+  // async addStudent(student:CreateStudentDto):Promise<boolean>{
+  //   const stundet0=await this.studentModel.findOne({id:student.id});
+  //   const student1=await this.studentModel.findOne({username:student.username});
+  //   if (student1===undefined && stundet0===undefined){
+  //     await this.studentModel.save({
+  //       id:student.id,
+  //       username:student.username,
+  //       password:student.password,
+  //       name:student.name,
+  //       articles:[],
+  //       attendanceRecords:[],
+  //       wordle:null
+  //     }).catch(reason => {
+  //       console.log(reason)
+  //       return false;
+  //     })
+  //     return true;
+  //   }
+  //   return false;
+  // }
+  // async updateStudent(student:UpdateStudentDto):Promise<boolean>{
+  //   let flag=true;
+  //   const studentToUpdate=await this.studentModel.findOne({id:student.id})
+  //     .catch(reason => {
+  //       flag=false;
+  //       console.log(reason)
+  //     });
+  //   if (studentToUpdate===undefined){
+  //     return false;
+  //   }
+  //   if (flag){
+  //     (<Student>studentToUpdate).name=selectNotNULL(student.name,(<Student>studentToUpdate).name);
+  //     (<Student>studentToUpdate).username=selectNotNULL(student.username,(<Student>studentToUpdate).username);
+  //     (<Student>studentToUpdate).password=selectNotNULL(student.password,(<Student>studentToUpdate).password);
+  //     await this.studentModel.save(<Student>studentToUpdate).catch(reason => {
+  //       console.log(reason)
+  //       flag=false;
+  //     });
+  //   }
+  //   return flag;
+  // }
   async getStudentById(id:number,sid:number):Promise<DetailedStudentDto|null>{
-    const student=await this.studentModel.findOne({relations:['attendanceRecords','wordle'],where:{id:id}})
+    console.log('asdasdasdas')
+    const student=await this.studentModel.findOne({relations:['attendanceRecords','wordle'],where:{staff_id:id}})
     if (student===undefined){
       return null;
     }
-    const articles=await this.articleModel.find({relations:['sort','student'],where:{student:student}})
+    console.log(123)
+    const articles=await this.articleModel.find({relations:['sort','user'],where:{user:student}})
     const detailedStudentDto=toDetailedStudentDto(student);
     const detailedArticleDtoList=[];
     detailedStudentDto.countLikes=0;
@@ -104,13 +106,14 @@ export class StudentService {
     const detailedStudentDtoList:DetailedStudentDto[]=[];
     switch (queryListDto.sortCriteria) {
       case 'username':{order={username:-1}}break;
-      case 'name':{order={name:-1}}break;
+      // case 'name':{order={name:-1}}break;
       case  'id':{order={id:-1}}break;
       default :{order={id:1}}break;
     }
+    // console.log(await this.studentModel.findOne({where:{staff_id:'20051400'},relations:['wordle','attendanceRecords']}));
     let studentList=await this.studentModel.find({
       order:order
-      ,relations:['attendanceRecords','wordle']
+      ,relations:['wordle','attendanceRecords']
       ,take:selectNotNULL(queryListDto.limit,-1)
       ,skip:selectNotNULL(queryListDto.offset,0)
       ,}).catch(reason => {
@@ -120,10 +123,11 @@ export class StudentService {
     if (!flag){
       return null;
     }
-    studentList=studentList as Student[]
+    studentList=studentList as User[]
+    console.log(studentList)
     for (let i = 0; i < studentList.length; i++) {
       detailedStudentDtoList.push(toDetailedStudentDto(studentList[i]));
-      const articles=await this.articleModel.find({relations:['sort','student'],where:{student:studentList[i]}})
+      const articles=await this.articleModel.find({relations:['sort','user'],where:{user:studentList[i]}})
       const detailedArticleDtoList=[];
       detailedStudentDtoList[i].countViews=0;
       detailedStudentDtoList[i].countLikes=0;
@@ -145,6 +149,7 @@ export class StudentService {
         detailedArticleDtoList.push(detailedArticleDto);
       }
       detailedStudentDtoList[i].articles=detailedArticleDtoList;
+      console.log(detailedStudentDtoList[i]);
     }
     return detailedStudentDtoList;
   }

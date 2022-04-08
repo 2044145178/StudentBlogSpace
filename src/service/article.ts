@@ -7,11 +7,11 @@ import {isEmpty} from "lodash";
 import {todetailedArticleDto,} from "./utils/entityTOdto";
 import ArticleLabel from "../entity/blog/article_label";
 import Label from "../entity/blog/label";
-import Student from "../entity/student/student";
 import Sort from "../entity/blog/sort";
 import {selectNotNULL} from "./utils/utils";
 import {LikeInfoDto, QueryListDto} from "../dto/common/Comm";
 import StudentLikeArticle from "../entity/blog/student_like_article";
+import User from "../entity/user/user";
 
 @Provide()
 export class ArticleService{
@@ -19,17 +19,19 @@ export class ArticleService{
   articleModel:Repository<Article>;
   @InjectEntityModel(Label)
   labelModel:Repository<Label>
-  @InjectEntityModel(Student)
-  studentModel:Repository<Student>
+  // @InjectEntityModel(Student)
+  // studentModel:Repository<Student>
   @InjectEntityModel(Sort)
   sortModel:Repository<Sort>
   @InjectEntityModel(ArticleLabel)
   articleLabel:Repository<ArticleLabel>;
   @InjectEntityModel(StudentLikeArticle)
   studentLikeArticle:Repository<StudentLikeArticle>
+  @InjectEntityModel(User)
+  userModel:Repository<User>
   async addArticle(article:CreateArticleDto):Promise<boolean>{
     let flag=true;
-    const student=await this.studentModel.findOne({id:article.studentId});
+    const student=await this.userModel.findOne({staff_id:article.studentId});
     if (isEmpty(student)){
       console.log('121')
       return false;
@@ -50,7 +52,7 @@ export class ArticleService{
       views:0,
       likes:0,
       show:article.show,
-      student:student,
+      user:student,
       sort:sort
     }).catch(reason => {
       flag=false;
@@ -106,6 +108,8 @@ export class ArticleService{
             return false;
           }
         }
+        const labels=await this.articleLabel.find({articleId:article.id});
+        await this.articleLabel.remove(labels);
         for (let i = 0; i < article.labelsId.length; i++) {
           //待修改为事务处理
           await this.articleLabel.save({articleId:article.id,labelId:article.labelsId[i]}).catch(reason => {
@@ -123,7 +127,7 @@ export class ArticleService{
     return flag;
   }
   async getArticleById(aid:number,sid:number):Promise<DetailedArticleDto|null>{
-    const article =await this.articleModel.findOne({relations:['sort','student'],where:{id:aid}});
+    const article =await this.articleModel.findOne({relations:['sort','user'],where:{id:aid}});
     if (article===undefined){
       return null;
     }
@@ -155,7 +159,7 @@ export class ArticleService{
     }
     const articleList=await this.articleModel.find({
       order:order
-      ,relations:['sort','student']
+      ,relations:['sort','user']
       ,take:selectNotNULL(queryListDto.limit,-1)
       ,skip:selectNotNULL(queryListDto.offset,0)
       ,}).catch(reason => {
@@ -183,7 +187,7 @@ export class ArticleService{
     return detailedArticleDtoList;
     // const articleList=await this.articleModel
     //   .createQueryBuilder('article')
-    //   .innerJoinAndMapMany('article.student',Student,'student','student.id=article.studentId')
+    //   .innerJoinAndMapMany('article.student',Student,'user','student.id=article.studentId')
     //   .innerJoinAndMapMany('article.sort',Sort,'sort','sort.id=article.sortId')
     //   .skip(selectNotNULL(comm.offset,0))
     //   .take(selectNotNULL(comm.limit,-1))
@@ -196,15 +200,15 @@ export class ArticleService{
     if (article===undefined){
       return false;
     }
-    const student=await this.studentModel.findOne({id:likeInfoDto.sid});
+    const student=await this.userModel.findOne({staff_id:likeInfoDto.sid});
     if (student===undefined){
       return false;
     }
-    const likeRES=await this.studentLikeArticle.findOne({articleId:likeInfoDto.aid,studentId:likeInfoDto.sid});
+    const likeRES=await this.studentLikeArticle.findOne({articleId:likeInfoDto.aid,studentId:Number.parseInt(likeInfoDto.sid)});
     if (likeRES===undefined){
       const likeRelation=new StudentLikeArticle()
       likeRelation.articleId=likeInfoDto.aid;
-      likeRelation.studentId=likeInfoDto.sid;
+      likeRelation.studentId=Number.parseInt(likeInfoDto.sid);
       await this.studentLikeArticle.save(likeRelation);
       article.likes+=1;
       await this.articleModel.save(article);

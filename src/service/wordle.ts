@@ -2,20 +2,20 @@ import {Provide} from "@midwayjs/decorator";
 import {InjectEntityModel} from "@midwayjs/orm";
 import {Repository} from "typeorm";
 import Wordle from "../entity/student/wordle";
-import Student from "../entity/student/student";
 import * as jieba from '@node-rs/jieba';
 import Article from "../entity/blog/article";
 import constant from "../common/common_constants";
+import User from "../entity/user/user";
 @Provide()
 export class WordleService {
   @InjectEntityModel(Wordle)
   wordleModel:Repository<Wordle>
-  @InjectEntityModel(Student)
-  studentModel:Repository<Student>
+  @InjectEntityModel(User)
+  studentModel:Repository<User>
   @InjectEntityModel(Article)
   articleModel:Repository<Article>
   async updateWordle(id:number):Promise<boolean>{
-    const student:Student=await this.studentModel.findOne({relations:['wordle'],where:{id:id}});
+    const student:User=await this.studentModel.findOne({relations:['wordle'],where:{staff_id:id}});
     let wordle;
     if (student===undefined){
       return false;
@@ -26,7 +26,7 @@ export class WordleService {
       wordle=await this.wordleModel.findOne({id:student.wordle.id});
     }
     console.log(wordle)
-    const articles=await this.articleModel.find({student:student});
+    const articles=await this.articleModel.find({user:student});
     const mapRES=new Map();
     for (let i = 0; i < articles.length; i++) {
       let sentence=articles[i].content;
@@ -52,9 +52,9 @@ export class WordleService {
     arr=arr.slice(0,50)
     let newWordle;
     if (wordle===undefined){
-      newWordle=await this.wordleModel.save({imageUrl:JSON.stringify(arr)})
+      newWordle=await this.wordleModel.save({jsonString:JSON.stringify(arr)})
     }else {
-      wordle.imageUrl=JSON.stringify(arr)
+      wordle.jsonString=JSON.stringify(arr)
       newWordle=await this.wordleModel.save(wordle)
     }
     student.wordle=newWordle;

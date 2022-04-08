@@ -5,13 +5,13 @@ import {generateUUID} from "../../common/utils";
 import {CacheManager} from "@midwayjs/cache";
 import {InjectEntityModel} from "@midwayjs/orm";
 import {Repository} from "typeorm";
-import Student from "../../entity/student/student";
+import User from "../../entity/user/user";
 @Provide()
 export class VerifyService{
   @Inject()
   cacheManager:CacheManager;
-  @InjectEntityModel(Student)
-  studentModel:Repository<Student>
+  @InjectEntityModel(User)
+  userModel:Repository<User>
   async createCaptchaImg():Promise<CaptchaImgDto>{
     const svg=svgCaptcha.create({
       size:4,
@@ -40,20 +40,19 @@ export class VerifyService{
     return true;
   }
   async getLoginToken(username: string, password: string):Promise<LoginSuccessInfoDto|null>{
-    const student=await this.studentModel.findOne({username:username});
-    if (student===undefined){
+    const user=await this.userModel.findOne({username:username});
+    if (user===undefined){
       return null;
     }
-    if ((<Student>student).password!==password){
+    if ((<User>user).password!==password){
       return null;
     }
     const token=generateUUID();
     await this.cacheManager.set(`login:token:${username}`,token,{ttl:24*60*60});
     const loginSuccessInfoDto=new LoginSuccessInfoDto();
     loginSuccessInfoDto.token=token;
-    loginSuccessInfoDto.id=student.id;
-    loginSuccessInfoDto.username=student.username;
-    loginSuccessInfoDto.name=student.name;
+    loginSuccessInfoDto.id=user.id;
+    loginSuccessInfoDto.username=user.username;
     return loginSuccessInfoDto;
   }
 }

@@ -1,5 +1,6 @@
 import {EntityModel} from "@midwayjs/orm";
-import {Column, PrimaryGeneratedColumn} from "typeorm";
+import {Column, JoinColumn, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import User from "../user/user";
 
 @EntityModel('wordle')
 export default class Wordle{
@@ -11,5 +12,8 @@ export default class Wordle{
     length:1024,
     nullable:false,
   })
-  imageUrl:string;
+  jsonString:string;
+  @OneToOne(type => User,user => user.wordle)
+  @JoinColumn({name:'staff_id',referencedColumnName:'staff_id'})
+  user:User;
 }

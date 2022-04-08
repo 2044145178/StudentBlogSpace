@@ -58,17 +58,17 @@ export class LoginSuccessInfoDto{
   @ApiProperty({description:'用户名', example:'204414512'})
   @Rule(RuleType.string().required())
   username: string;
-  @ApiProperty({description:'学生姓名', example:'张三'})
-  @Rule(RuleType.string().required())
-  name: string;
+  // @ApiProperty({description:'学生姓名', example:'张三'})
+  // @Rule(RuleType.string().required())
+  // name: string;
   @ApiProperty({description:'token令牌', example:'0CRq2jsasd421thWUp7DiLCftB-P'})
   @Rule(RuleType.string().required())
   token: string;
 }
 export class LikeInfoDto {
   @ApiProperty({description:'学生ID', example:'20051000'})
-  @Rule(RuleType.number().required())
-  sid:number;
+  @Rule(RuleType.string().required())
+  sid:string;
   @ApiProperty({description:'博文ID', example:'4'})
   @Rule(RuleType.number().required())
   aid:number;
