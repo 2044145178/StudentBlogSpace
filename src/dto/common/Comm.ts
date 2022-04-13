@@ -3,8 +3,8 @@ import {Rule, RuleType} from "@midwayjs/validate";
 
 export class QueryListDto {
   @ApiProperty({description:'学生ID',example:'20051000'})
-  @Rule(RuleType.number().required())
-  studentId:number;
+  @Rule(RuleType.string().required())
+  studentId:string;
   @ApiProperty({description:'资源ID，获取单个资源',example:'4'})
   @Rule(RuleType.number().empty())
   id:number;
